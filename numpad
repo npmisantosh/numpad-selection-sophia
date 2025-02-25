@@ -1,0 +1,38 @@
+// ==UserScript==
+// @name         NumPad Sophia Shortcut
+// @namespace    http://tampermonkey.net/
+// @version      1.9
+// @description  Auto-select quiz options on Sophia Learning using numpad
+// @match        *://*/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    // Function to handle numpad key presses for selecting radio buttons
+    document.addEventListener('keydown', function(event) {
+        if (event.code.startsWith('Numpad')) {
+            let num = event.code.replace('Numpad', '');
+            let index = parseInt(num) - 1;
+            let options = document.querySelectorAll('input[type="radio"]');
+
+            if (options[index]) {
+                options[index].click();
+            }
+        }
+
+        // Function to handle pressing Enter to submit or go to the next question
+        if (event.code === 'Enter') {
+            let buttons = [...document.querySelectorAll('button, input[type="submit"]')];
+
+            let targetButton = buttons.find(btn => {
+                let text = btn.innerText.trim().toLowerCase();
+                return text.includes("submit") || text.includes("answer") ||
+                       text.includes("continue") || text.includes("next") || text.includes("save");
+            });
+
+            if (targetButton) {
+                targetButton.click();
+            }
+        }
+    });
+})();
